@@ -11,23 +11,15 @@ void push(stack_t **stack, unsigned int line_number)
     char *value_str = strtok(NULL, " \t\n\r");
     int value;
 
-    if (!value_str)
+    printf("Value string: %s\n", value_str); // Debugging print
+
+    if (!value_str || !isdigit(*value_str))
     {
         fprintf(stderr, "L%d: usage: push integer\n", line_number);
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; value_str[i]; i++)
-    {
-        if ((value_str[i] == '-' && i == 0) || (isdigit(value_str[i]) == 0))
-        {
-            fprintf(stderr, "L%d: usage: push integer\n", line_number);
-            exit(EXIT_FAILURE);
-        }
-    }
-
     value = atoi(value_str);
-
     add_dnodeint(stack, value);
 }
 
