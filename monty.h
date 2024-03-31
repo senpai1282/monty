@@ -32,7 +32,10 @@ typedef struct instruction_s
 {
 		char *opcode;
 		void pint(stack_t **stack, unsigned int line_number);
-} instruction_t;
+        void push(stack_t **stack, unsigned int line_number);
+    void pall(stack_t **stack, unsigned int line_number);
+} 
+instruction_t;
 int _isdigit(int c);
 stack_t *add_dnodeint(stack_t **head, int n);
 char *no_breakline(char *buffer);
