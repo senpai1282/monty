@@ -1,38 +1,51 @@
 #include "monty.h"
 #include <stdio.h>
+#define _GNU_SOURCE
+#include <stdlib.h>
+
+bus_t bus = {NULL, NULL, NULL, 0};
 
 /**
- * main - function main of montybytecode interpreter
- * @argc: amount of parameters of the main
- * @argv: double pointer to each parameter of main
- * Return: 0
- */
-int main(int argc, char **argv)
+* main - function for monty code interpreter
+* @argc: argument count
+* @argv: argument value
+*
+* Return: 0 on success
+*/
+int main(int argc, char *argv[])
 {
-    FILE *fp = NULL;
-    int status = 1, line = 1;
-    char line_buffer[1024];
-    char *str; /* Declare str here */
+	char *content;
+	FILE *file;
+	size_t size = 0;
+	ssize_t read_line = 1;
+	stack_t *stack = NULL;
+	unsigned int counter = 0;
 
-    if (argc != 2)
-    {
-        printf("USAGE: monty file\n");
-        exit(EXIT_FAILURE);
-    }
-    fp = fopen(argv[1], "r");
-    if (fp == NULL)
-    {
-        printf("Error: Can't open file %s\n", argv[1]);
-        exit(EXIT_FAILURE);
-    }
-    while (status)
-    {
-        if (fgets(line_buffer, sizeof(line_buffer), fp) == NULL)
-            break;
-        str = strtok(line_buffer, " \n\t\r"); /* Move declaration here */
-        make_op(str, line);
-        line++;
-    }
-    fclose(fp);
-    return (0);
+	if (argc != 2)
+	{
+		fprintf(stderr, "USAGE: monty file\n");
+		exit(EXIT_FAILURE);
+	}
+	file = fopen(argv[1], "r");
+	bus.file = file;
+	if (!file)
+	{
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+	while (read_line > 0)
+	{
+		content = NULL;
+		read_line = getline(&content, &size, file);
+		bus.content = content;
+		counter++;
+		if (read_line > 0)
+		{
+			execute(content, &stack, counter, file);
+		}
+		free(content);
+	}
+	free_stack(stack);
+	fclose(file);
+return (0);
 }
